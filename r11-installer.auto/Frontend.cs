@@ -1,4 +1,5 @@
 ﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.Marshalling;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
@@ -34,25 +35,62 @@ namespace r11_installer.auto
                 {
                     Console.WriteLine("Config file not found, creating new config file...\n");
                     File.Create(configFile);
-                    Console.WriteLine("Set a time interval to pull down PRs (in days)");
+                    Console.WriteLine("Set a time interval to pull down PRs and build (in days)");
                     int? Interval = Convert.ToInt32(Console.ReadLine());
                     Console.WriteLine("");
                     Console.WriteLine("Getting current day number of the year: Day " + DateTime.Now.DayOfYear.ToString());
                     Console.WriteLine("Calculating day of next build date");
                     Console.WriteLine("----------------------------------\n");
                     int dayYear = (int)(DateTime.Now.DayOfYear + Interval);
-                    if (dayYear >= 365)
+                    if (dayYear > 365)
                     {
                         Console.WriteLine("Date rolls over into next year, happy new years!");
                         int yearOver = DateTime.Now.Year;
-                        DateTime buildDateOver = new DateTime(yearOver, 1, 1).AddDays(yearOver - 1);
-                        Console.WriteLine("Next build date: " + buildDateOver.ToString("M/d/yyyy"));
+                        DateTime buildDateOver = new DateTime(yearOver, 1, 1).AddDays(dayYear - 1);
+                        Console.WriteLine("Next build date: " + buildDateOver.ToString("M/d/yyyy\n"));
                     }
                     else
                     {
                         int year = DateTime.Now.Year;
                         DateTime buildDate = new DateTime(year, 1, 1).AddDays(dayYear - 1);
-                        Console.WriteLine("Next build date: " + buildDate.ToString("M/d/yyyy"));
+                        Console.WriteLine("Next build date: " + buildDate.ToString("M/d/yyyy\n"));
+                    }
+
+                    Console.WriteLine("What hour would you like to trigger the check event (military hours, 1-24)?");
+                    int triggerTime = Convert.ToInt32(Console.ReadLine());
+                    try
+                    {
+                        if (triggerTime > 24)
+                        {
+                            triggerTime = 24;
+                        }
+                        else if (triggerTime <= 0)
+                        {
+                            triggerTime = 1;
+                        }
+                        Console.WriteLine("Starting check, console will update daily.");
+                        Console.WriteLine("------------------------------------------\n");
+                        var dailyCheck = new DailyTrigger(triggerTime);
+                        dailyCheck.OnTimeTriggered += () =>
+                        {
+                            int yearCheck = DateTime.Now.Year;
+                            DateTime buildDateCheck = new DateTime(yearCheck, 1, 1).AddDays(dayYear - 1);
+                            string now = DateTime.Now.ToString("D");
+                            string check = buildDateCheck.ToString("D");
+                            if (now == check)
+                            {
+                                Console.WriteLine("Build date hit!");
+                            }
+                            else
+                            {
+                                Console.WriteLine("Waiting for the day...when it's finally time to build!");
+                            }
+                        };
+                    }
+                    catch (Exception ExHour)
+                    {
+                        using (StreamWriter sw = File.CreateText(logfile))
+                        sw.WriteLine("CRASH! Trace: " + ExHour.Message);
                     }
                 }
                 catch (Exception Ex)
