@@ -35,8 +35,25 @@ namespace r11_installer.auto
                     Console.WriteLine("Config file not found, creating new config file...\n");
                     File.Create(configFile);
                     Console.WriteLine("Set a time interval to pull down PRs (in days)");
-                    int? Inverval = Convert.ToInt32(Console.ReadLine());
+                    int? Interval = Convert.ToInt32(Console.ReadLine());
+                    Console.WriteLine("");
                     Console.WriteLine("Getting current day number of the year: Day " + DateTime.Now.DayOfYear.ToString());
+                    Console.WriteLine("Calculating day of next build date");
+                    Console.WriteLine("----------------------------------\n");
+                    int dayYear = (int)(DateTime.Now.DayOfYear + Interval);
+                    if (dayYear >= 365)
+                    {
+                        Console.WriteLine("Date rolls over into next year, happy new years!");
+                        int yearOver = DateTime.Now.Year;
+                        DateTime buildDateOver = new DateTime(yearOver, 1, 1).AddDays(yearOver - 1);
+                        Console.WriteLine("Next build date: " + buildDateOver.ToString("M/d/yyyy"));
+                    }
+                    else
+                    {
+                        int year = DateTime.Now.Year;
+                        DateTime buildDate = new DateTime(year, 1, 1).AddDays(dayYear - 1);
+                        Console.WriteLine("Next build date: " + buildDate.ToString("M/d/yyyy"));
+                    }
                 }
                 catch (Exception Ex)
                 {
