@@ -46,7 +46,7 @@ namespace r11_installer.auto
                     Calendar calendar = new GregorianCalendar();
                     if (dayYear > calendar.GetDaysInYear(DateTime.Now.Year))
                     {
-                        Console.WriteLine("Date rolls over into next year, happy new years!");
+                        Console.WriteLine("Date rolls over into next year, happy new year!");
                         int yearOver = DateTime.Now.Year;
                         DateTime buildDateOver = new DateTime(yearOver, 1, 1).AddDays(dayYear - 1);
                         Console.WriteLine("Next build date: " + buildDateOver.ToString("M/d/yyyy\n"));
