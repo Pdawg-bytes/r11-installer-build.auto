@@ -8,5 +8,7 @@ namespace r11_installer.auto
 {
     internal class DataModel
     {
+        public int? Interval { get; set; }
+        public int TriggerTime { get; set; }
     }
 }
