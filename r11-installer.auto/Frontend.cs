@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
@@ -12,7 +13,8 @@ namespace r11_installer.auto
         // Constant paths
         public const string configFile = "config.json";
         public const string logfile = "logs.txt";
-        
+        public static int InterPublic;
+
         public static void Main(System.String[] args)
         {
             Console.WriteLine("Welcome to the Rectify 11 Installer automatic builder! Created by Pdawg-bytes on GitHub.");
@@ -20,16 +22,9 @@ namespace r11_installer.auto
             Console.WriteLine("If you experience any crashes, check logs.txt inside the folder that you are running the program from.");
             Console.WriteLine("------------------------------------------------------------------------------------------------------\n");
 
-            // Imports user32 for bringing window to focus
-            try
+            if (Debugger.IsAttached)
             {
-                [DllImport("User32.dll")]
-                static extern Int32 SetForegroundWindow(int hWnd);
-            }
-            catch (Exception ExDLL)
-            {
-                using (StreamWriter sw = File.CreateText(logfile))
-                sw.WriteLine("CRASH! Trace: " + ExDLL.Message);
+                File.Delete(configFile);
             }
 
             if (!File.Exists(configFile))
@@ -41,6 +36,7 @@ namespace r11_installer.auto
                     File.Create(configFile);
                     Console.WriteLine("Set a time interval to pull down PRs and build (in days)");
                     int? Interval = Convert.ToInt32(Console.ReadLine());
+                    InterPublic = (int)Interval;
                     Console.WriteLine("");
                     Console.WriteLine("Getting current day number of the year: Day " + DateTime.Now.DayOfYear.ToString());
                     Console.WriteLine("Calculating day of next build date");
@@ -75,36 +71,17 @@ namespace r11_installer.auto
                         {
                             triggerTime = 1;
                         }
+                        Console.WriteLine("");
                         Console.WriteLine("Starting check, console will update daily.");
                         Console.WriteLine("------------------------------------------\n");
                         // Creates object dailyCheck and checks if the build date is hit
                         var dailyCheck = new DailyTrigger(triggerTime);
+                        var tempTrigger = new TriggerCheck();
+                        tempTrigger.DailyCheckTrigger();
                         dailyCheck.OnTimeTriggered += () =>
                         {
-                            int yearCheck = DateTime.Now.Year;
-                            DateTime buildDateCheck = new DateTime(yearCheck, 1, 1).AddDays(dayYear - 1);
-                            // Truncates exact time from date
-                            string now = DateTime.Now.ToString("D");
-                            string check = buildDateCheck.ToString("D");
-                            int? daysLeft = Interval + 1;
-                            if (now == check)
-                            {
-                                // Prep for build
-                                Console.WriteLine("Build date hit!");
-                                Console.WriteLine("Preparing for Git pull...");
-                                Directory.CreateDirectory("Git");
-                                Directory.CreateDirectory("Build");
-                                
-                                // Build process
-                            }
-                            else
-                            {
-                                // Updates status
-                                daysLeft--;
-                                Console.WriteLine("Waiting for the day...when it's finally time to build!");
-                                Console.WriteLine("Days left: " + daysLeft.ToString());
-                                Console.WriteLine("------------------------------------------------------\n");
-                            }
+                            var triggerclass = new TriggerCheck();
+                            triggerclass.DailyCheckTrigger();
                         };
                     }
                     catch (Exception ExHour)
