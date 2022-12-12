@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
 using System.Text.Json;
@@ -9,8 +9,10 @@ namespace r11_installer.auto
 {
     public class Frontend
     { 
+        // Constant paths
         public const string configFile = "config.json";
         public const string logfile = "logs.txt";
+        
         public static void Main(System.String[] args)
         {
             Console.WriteLine("Welcome to the Rectify 11 Installer automatic builder! Created by Pdawg-bytes on GitHub.");
@@ -32,6 +34,7 @@ namespace r11_installer.auto
 
             if (!File.Exists(configFile))
             {
+                // Backend that creates config and takes user settings
                 try
                 {
                     Console.WriteLine("Config file not found, creating new config file...\n");
@@ -43,6 +46,7 @@ namespace r11_installer.auto
                     Console.WriteLine("Calculating day of next build date");
                     Console.WriteLine("----------------------------------\n");
                     int dayYear = (int)(DateTime.Now.DayOfYear + Interval);
+                    // Creates now calendar instance and calculates next build date.
                     Calendar calendar = new GregorianCalendar();
                     if (dayYear > calendar.GetDaysInYear(DateTime.Now.Year))
                     {
@@ -62,6 +66,7 @@ namespace r11_installer.auto
                     int triggerTime = Convert.ToInt32(Console.ReadLine());
                     try
                     {
+                        // Checks if input hour is invalid
                         if (triggerTime > 24)
                         {
                             triggerTime = 24;
@@ -72,27 +77,33 @@ namespace r11_installer.auto
                         }
                         Console.WriteLine("Starting check, console will update daily.");
                         Console.WriteLine("------------------------------------------\n");
+                        // Creates object dailyCheck and checks if the build date is hit
                         var dailyCheck = new DailyTrigger(triggerTime);
                         dailyCheck.OnTimeTriggered += () =>
                         {
                             int yearCheck = DateTime.Now.Year;
                             DateTime buildDateCheck = new DateTime(yearCheck, 1, 1).AddDays(dayYear - 1);
+                            // Truncates exact time from date
                             string now = DateTime.Now.ToString("D");
                             string check = buildDateCheck.ToString("D");
-                            int? daysLeft = Interval;
+                            int? daysLeft = Interval + 1;
                             if (now == check)
                             {
+                                // Prep for build
                                 Console.WriteLine("Build date hit!");
                                 Console.WriteLine("Preparing for Git pull...");
                                 Directory.CreateDirectory("Git");
                                 Directory.CreateDirectory("Build");
-
+                                
+                                // Build process
                             }
                             else
                             {
+                                // Updates status
+                                daysLeft--;
                                 Console.WriteLine("Waiting for the day...when it's finally time to build!");
                                 Console.WriteLine("Days left: " + daysLeft.ToString());
-                                Console.WriteLine("");
+                                Console.WriteLine("------------------------------------------------------\n");
                             }
                         };
                     }
@@ -116,7 +127,7 @@ namespace r11_installer.auto
             }
         }
 
-        public void Save()
+        /*public void Save()
         {
             var config = new DataModel
             {
@@ -126,6 +137,6 @@ namespace r11_installer.auto
             string jsonString = JsonSerializer.Serialize(config, options);
             Console.WriteLine("Saving JSON...");
             Console.WriteLine(config);
-        }
+        }*/
     }
 }
