@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
 using System.Text.Json;
@@ -84,9 +85,31 @@ namespace r11_installer.auto
                             {
                                 Console.WriteLine("Build date hit!");
                                 Console.WriteLine("Preparing for Git pull...");
-                                Directory.CreateDirectory("Git");
+
+                                if (!Directory.Exists("Git")) Directory.CreateDirectory("Git");
+                                if (Directory.Exists("Build")) Directory.Move("Build", "Build.bak");
                                 Directory.CreateDirectory("Build");
 
+
+                                string directory = ""; // directory of the git repository
+
+                                using (PowerShell powershell = PowerShell.Create())
+                                {
+                                    // this changes from the user folder that PowerShell starts up with to your git repository
+                                    powershell.AddScript($"cd {directory}");
+
+                                    powershell.AddScript(@"git init");
+                                    powershell.AddScript(@"git add *");
+                                    powershell.AddScript(@"git commit -m 'git commit from PowerShell in C#'");
+                                    powershell.AddScript(@"git push");
+
+                                    Collection<PSObject> results = powershell.Invoke();
+                                }
+
+
+
+                                // TODO: If build succeeds, delete Build.bak
+                                Directory.Delete("Build.bak", true);
                             }
                             else
                             {
