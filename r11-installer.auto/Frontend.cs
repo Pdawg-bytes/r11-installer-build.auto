@@ -77,13 +77,20 @@ namespace r11_installer.auto
                             DateTime buildDateCheck = new DateTime(yearCheck, 1, 1).AddDays(dayYear - 1);
                             string now = DateTime.Now.ToString("D");
                             string check = buildDateCheck.ToString("D");
+                            int? daysLeft = Interval;
                             if (now == check)
                             {
                                 Console.WriteLine("Build date hit!");
+                                Console.WriteLine("Preparing for Git pull...");
+                                Directory.CreateDirectory("Git");
+                                Directory.CreateDirectory("Build");
+
                             }
                             else
                             {
                                 Console.WriteLine("Waiting for the day...when it's finally time to build!");
+                                Console.WriteLine("Days left: " + daysLeft.ToString());
+                                Console.WriteLine("");
                             }
                         };
                     }
