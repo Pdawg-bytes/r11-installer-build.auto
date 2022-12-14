@@ -14,7 +14,7 @@ namespace r11_installer.auto
         [DllImport("User32.dll")]
         public static extern Int32 SetForegroundWindow(int hWnd);
 
-        public void DailyCheckTrigger()
+        public static void DailyCheckTrigger()
         {
             int dayYear = (int)(DateTime.Now.DayOfYear + Frontend.InterPublic);
             int yearCheck = DateTime.Now.Year;
@@ -26,11 +26,14 @@ namespace r11_installer.auto
             if (now == check)
             {
                 // Prep for build
+                Process[] ps = Process.GetProcessesByName("windowsterminal.exe");
+                Process termProcess = ps.FirstOrDefault();
+                IntPtr windowHandle = termProcess.MainWindowHandle;
+                SetForegroundWindow((int)windowHandle);
                 Console.WriteLine("Build date hit!");
                 Console.WriteLine("Preparing for Git pull...");
                 Directory.CreateDirectory("Git");
                 Directory.CreateDirectory("Build");
-
                 // Build process
             }
             else

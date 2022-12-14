@@ -22,6 +22,10 @@ namespace r11_installer.auto
             Console.WriteLine("If you experience any crashes, check logs.txt inside the folder that you are running the program from.");
             Console.WriteLine("------------------------------------------------------------------------------------------------------\n");
 
+            var timerObject = new TimerThread();
+            Thread timerThread = new Thread(TimerThread.IntAdd);
+            timerThread.Start();
+
             if (Debugger.IsAttached)
             {
                 File.Delete(configFile);
@@ -77,11 +81,10 @@ namespace r11_installer.auto
                         // Creates object dailyCheck and checks if the build date is hit
                         var dailyCheck = new DailyTrigger(triggerTime);
                         var tempTrigger = new TriggerCheck();
-                        tempTrigger.DailyCheckTrigger();
                         dailyCheck.OnTimeTriggered += () =>
                         {
                             var triggerclass = new TriggerCheck();
-                            triggerclass.DailyCheckTrigger();
+                            // triggerclass.DailyCheckTrigger();
                         };
                     }
                     catch (Exception ExHour)
