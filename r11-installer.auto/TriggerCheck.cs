@@ -26,19 +26,16 @@ namespace r11_installer.auto
             if (now == check)
             {
                 // Prep for build
-                Process[] ps = Process.GetProcessesByName("windowsterminal.exe");
-                Process termProcess = ps.FirstOrDefault();
-                IntPtr windowHandle = termProcess.MainWindowHandle;
-                SetForegroundWindow((int)windowHandle);
                 Console.WriteLine("Build date hit!");
                 Console.WriteLine("Preparing for Git pull...");
-                Directory.CreateDirectory("Git");
-                Directory.CreateDirectory("Build");
+                Frontend.IsRun = true;
+
                 // Build process
             }
             else
             {
                 // Updates status
+                Frontend.IsRun = false;
                 daysLeft--;
                 Console.WriteLine("Waiting for the day...when it's finally time to build!");
                 Console.WriteLine("Days left: " + daysLeft.ToString());

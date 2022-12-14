@@ -88,6 +88,10 @@ namespace r11_installer.auto
                         while (IsRun == false)
                         {
                             timerThread.Start();
+                            if (IsRun == true)
+                            {
+                                timerThread.Suspend();
+                            }
                         }
                     }
                     catch (Exception ExHour)
