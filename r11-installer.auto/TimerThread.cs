@@ -11,8 +11,12 @@ namespace r11_installer.auto
         public static int i;
         public static void IntAdd()
         {
-            i++;
-            Task.Delay(4000);
+            while (Frontend.IsRun == false)
+            {
+                i++;
+                Thread.Sleep(10000);
+                Console.WriteLine(i.ToString());
+            }
         }
     }
 }

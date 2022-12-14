@@ -14,6 +14,7 @@ namespace r11_installer.auto
         public const string configFile = "config.json";
         public const string logfile = "logs.txt";
         public static int InterPublic;
+        public static bool IsRun;
 
         public static void Main(System.String[] args)
         {
@@ -24,7 +25,6 @@ namespace r11_installer.auto
 
             var timerObject = new TimerThread();
             Thread timerThread = new Thread(TimerThread.IntAdd);
-            timerThread.Start();
 
             if (Debugger.IsAttached)
             {
@@ -80,12 +80,15 @@ namespace r11_installer.auto
                         Console.WriteLine("------------------------------------------\n");
                         // Creates object dailyCheck and checks if the build date is hit
                         var dailyCheck = new DailyTrigger(triggerTime);
-                        var tempTrigger = new TriggerCheck();
                         dailyCheck.OnTimeTriggered += () =>
                         {
                             var triggerclass = new TriggerCheck();
-                            // triggerclass.DailyCheckTrigger();
+                            triggerclass.DailyCheckTrigger();
                         };
+                        while (IsRun == false)
+                        {
+                            timerThread.Start();
+                        }
                     }
                     catch (Exception ExHour)
                     {

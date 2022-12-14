@@ -14,7 +14,7 @@ namespace r11_installer.auto
         [DllImport("User32.dll")]
         public static extern Int32 SetForegroundWindow(int hWnd);
 
-        public static void DailyCheckTrigger()
+        public void DailyCheckTrigger()
         {
             int dayYear = (int)(DateTime.Now.DayOfYear + Frontend.InterPublic);
             int yearCheck = DateTime.Now.Year;
