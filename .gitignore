@@ -396,3 +396,5 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+r11-installer.auto/Files/Rectify11.Phase2.exe
+r11-installer.auto/Files/NSudoLC.exe

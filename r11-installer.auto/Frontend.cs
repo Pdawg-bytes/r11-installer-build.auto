@@ -66,6 +66,7 @@ namespace r11_installer.auto
                     int triggerTime = Convert.ToInt32(Console.ReadLine());
                     try
                     {
+                        timerThread.Start();
                         // Checks if input hour is invalid
                         if (triggerTime > 24)
                         {
@@ -85,14 +86,6 @@ namespace r11_installer.auto
                             var triggerclass = new TriggerCheck();
                             triggerclass.DailyCheckTrigger();
                         };
-                        while (IsRun == false)
-                        {
-                            timerThread.Start();
-                            if (IsRun == true)
-                            {
-                                timerThread.Suspend();
-                            }
-                        }
                     }
                     catch (Exception ExHour)
                     {

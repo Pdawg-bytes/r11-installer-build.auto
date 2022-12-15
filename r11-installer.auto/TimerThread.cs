@@ -15,7 +15,6 @@ namespace r11_installer.auto
             {
                 i++;
                 Thread.Sleep(10000);
-                Console.WriteLine(i.ToString());
             }
         }
     }
